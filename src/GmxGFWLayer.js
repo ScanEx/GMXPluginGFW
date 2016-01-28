@@ -2,16 +2,40 @@
 */
 (function (){
 
-var GeoMixerGFWLayer = L.GFWLayerWithSlider.extend({
-    initFromDescription: function(layerDescription) {
-        this._gmxProperties = layerDescription.properties;
-        return this;
-    },
-    getGmxProperties: function() {
-        return this._gmxProperties;
-    }
-});
+var defineClass = function() {
+    var GeoMixerGFWLayer = L.GFWLayerWithSlider.extend({
+        initFromDescription: function(layerDescription) {
+            this._gmxProperties = layerDescription.properties;
+            return this;
+        },
+        getGmxProperties: function() {
+            return this._gmxProperties;
+        }
+    });
+    L.gmx.addLayerClass('GFW', GeoMixerGFWLayer);
+    return GeoMixerGFWLayer;
+}
 
-L.gmx.addLayerClass('GFW', GeoMixerGFWLayer);
+
+if (window.gmxCore) {
+    gmxCore.addModule('GFWVirtualLayer', function() {
+        return {
+            layerClass: defineClass()
+        }
+    }, {
+        init: function(module, path) {
+            if (!L.GFWLayerWithSlider) {
+                gmxCore.loadCSS(path + 'L.GFWSlider.css');
+                return $.when(
+                    gmxCore.loadScript(path + 'L.GFWLayer.js'),
+                    gmxCore.loadScript(path + 'L.GFWSlider.js')
+                );
+            }
+        }
+        
+    });
+} else {
+    defineClass();
+}
  
 })();
