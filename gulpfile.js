@@ -14,12 +14,13 @@ const css = [
 
 gulp.task('js', () => {
     return gulp.src(js)
-        .pipe(concat('gmxGfwPlugin.js'))
+        .pipe(concat('gmxPluginGfw.js'))
         .pipe(gulp.dest('dist'))
 })
 
 gulp.task('css', () => {
     return gulp.src(css)
+        .pipe(concat('gmxPluginGfw.css'))
         .pipe(gulp.dest('dist'))
 })
 

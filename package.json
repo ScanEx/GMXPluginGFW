@@ -2,7 +2,7 @@
   "name": "gmx-plugin-gfw",
   "version": "0.0.1",
   "description": "Leaflet plugin to display Forest Loss layers from Global Forest Watch project",
-  "main": "dist/gmxGfwPlugin.js",
+  "main": "dist/gmxPluginGfw.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
