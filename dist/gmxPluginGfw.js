@@ -42,7 +42,7 @@ if (window.gmxCore) {
 /** GeoMixer plugin
 */
 (function (){
-
+ 
 var publicInterface = {
     pluginName: 'GFW Plugin'
 }
@@ -54,7 +54,6 @@ gmxCore.addModule('GFWPlugin', publicInterface, {
 });
 
 })();
-
 /** Leaflet layers
 */
 (function (){
