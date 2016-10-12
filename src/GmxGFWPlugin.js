@@ -1,7 +1,10 @@
 ﻿/** GeoMixer plugin
 */
 (function (){
- 
+if (!window.gmxCore) {
+    return
+}
+
 var publicInterface = {
     pluginName: 'GFW Plugin'
 }

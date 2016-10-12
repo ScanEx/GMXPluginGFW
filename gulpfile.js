@@ -2,10 +2,10 @@ const concat = require('gulp-concat')
 const gulp = require('gulp')
 
 const js = [
-    'src/GmxGFWLayer.js',
-    'src/GmxGFWPlugin.js',
     'src/L.GFWLayer.js',
-    'src/L.GFWSlider.js'
+    'src/L.GFWSlider.js',
+    'src/GmxGFWLayer.js',
+    'src/GmxGFWPlugin.js'
 ]
 
 const css = [
