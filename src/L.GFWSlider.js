@@ -41,7 +41,7 @@ L.GFWSlider = L.Control.extend({
             }.bind(this)
         });
 		L.DomEvent
-			.on(ui[0], 'mouseover', map.dragging.disable, this),
+			.on(ui[0], 'mouseover', map.dragging.disable, this)
 			.on(ui[0], 'mouseout', map.dragging.enable, this);
         
         // ui.on('mousedown', function(event) {
