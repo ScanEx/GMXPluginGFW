@@ -132,9 +132,10 @@ L.GFWSlider = L.Control.extend({
                 this._setYears(ui.values[0], ui.values[1]);
             }.bind(this)
         });
+		var dragging = map.dragging;
 		L.DomEvent
-			.on(ui[0], 'mouseover', map.dragging.disable, this)
-			.on(ui[0], 'mouseout', map.dragging.enable, this);
+			.on(ui[0], 'mouseover', dragging.disable, dragging)
+			.on(ui[0], 'mouseout', dragging.enable, dragging);
         
         // ui.on('mousedown', function(event) {
             // event.stopPropagation();
