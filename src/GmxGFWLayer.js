@@ -3,7 +3,7 @@
 (function (){
 
 var defineClass = function() {
-    var GeoMixerGFWLayer = L.GFWLayerWithSlider.extend({
+    var GeoMixerGFWLayer = L.GFWLayer.extend({
         initFromDescription: function(layerDescription) {
             this._gmxProperties = layerDescription.properties;
             return this;
@@ -24,7 +24,7 @@ if (window.gmxCore) {
         }
     }, {
         init: function(module, path) {
-            if (!L.GFWLayerWithSlider) {
+            if (!L.GFWLayer) {
                 gmxCore.loadCSS(path + 'L.GFWSlider.css');
                 return $.when(
                     gmxCore.loadScript(path + 'L.GFWLayer.js'),
@@ -32,10 +32,10 @@ if (window.gmxCore) {
                 );
             }
         }
-        
+
     });
 } else {
     defineClass();
 }
- 
+
 })();
