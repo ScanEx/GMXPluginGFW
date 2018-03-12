@@ -12,7 +12,7 @@ L.GFWLayer = L.TileLayer.Canvas.extend({
         attribution: GFW_ATTRIBUTION
     },
     _yearBegin: 2001,
-    _yearEnd: 2015,
+    _yearEnd: 2017,
 
     initialize: function() {
         var setYearInterval = this.setYearInterval.bind(this);
@@ -23,7 +23,8 @@ L.GFWLayer = L.TileLayer.Canvas.extend({
             setYearInterval(data.yearBegin, data.yearEnd);
         })
 
-        var url = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/{z}/{x}/{y}.png';
+        // var url = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/{z}/{x}/{y}.png';
+		var url = '//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/{z}/{x}/{y}.png';
 
         L.TileLayer.Canvas.prototype.initialize.call(this, url);
     },
@@ -82,7 +83,8 @@ L.GFWLayer = L.TileLayer.Canvas.extend({
             this.tileDrawn && this.tileDrawn(canvas);
         }.bind(this);
 
-       img.src = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
+        // img.src = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
+		img.src = '//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
     },
 
     createTile: function(coords){

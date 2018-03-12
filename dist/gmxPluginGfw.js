@@ -12,7 +12,7 @@ L.GFWLayer = L.TileLayer.Canvas.extend({
         attribution: GFW_ATTRIBUTION
     },
     _yearBegin: 2001,
-    _yearEnd: 2015,
+    _yearEnd: 2017,
 
     initialize: function() {
         var setYearInterval = this.setYearInterval.bind(this);
@@ -23,7 +23,8 @@ L.GFWLayer = L.TileLayer.Canvas.extend({
             setYearInterval(data.yearBegin, data.yearEnd);
         })
 
-        var url = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/{z}/{x}/{y}.png';
+        // var url = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/{z}/{x}/{y}.png';
+		var url = '//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/{z}/{x}/{y}.png';
 
         L.TileLayer.Canvas.prototype.initialize.call(this, url);
     },
@@ -82,7 +83,8 @@ L.GFWLayer = L.TileLayer.Canvas.extend({
             this.tileDrawn && this.tileDrawn(canvas);
         }.bind(this);
 
-       img.src = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
+        // img.src = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
+		img.src = '//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
     },
 
     createTile: function(coords){
@@ -147,7 +149,7 @@ L.GFWLayerWithSlider = L.Class.extend({
 L.GFWSlider = L.Control.extend({
     includes: L.Mixin.Events,
     _yearBegin: 2001,
-    _yearEnd: 2015,
+    _yearEnd: 2017,
     _setYears: function(yearBegin, yearEnd) {
         this._yearBegin = yearBegin;
         this._yearEnd = yearEnd;
@@ -166,7 +168,7 @@ L.GFWSlider = L.Control.extend({
         );
         
         var labels = [];
-        for (var year = 2001; year <= 2014; year++) {
+        for (var year = 2001; year <= 2016; year++) {
             labels.push(year);
         }
         
@@ -176,7 +178,7 @@ L.GFWSlider = L.Control.extend({
         
         ui.find('.gfw-slider-container').slider({
             min: 2001,
-            max: 2015,
+            max: 2017,
             values: [this._yearBegin, this._yearEnd],
             range: true,
             change: function(event, ui) {

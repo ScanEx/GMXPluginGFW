@@ -4,7 +4,7 @@
 L.GFWSlider = L.Control.extend({
     includes: L.Mixin.Events,
     _yearBegin: 2001,
-    _yearEnd: 2015,
+    _yearEnd: 2017,
     _setYears: function(yearBegin, yearEnd) {
         this._yearBegin = yearBegin;
         this._yearEnd = yearEnd;
@@ -23,7 +23,7 @@ L.GFWSlider = L.Control.extend({
         );
         
         var labels = [];
-        for (var year = 2001; year <= 2014; year++) {
+        for (var year = 2001; year <= 2016; year++) {
             labels.push(year);
         }
         
@@ -33,7 +33,7 @@ L.GFWSlider = L.Control.extend({
         
         ui.find('.gfw-slider-container').slider({
             min: 2001,
-            max: 2015,
+            max: 2017,
             values: [this._yearBegin, this._yearEnd],
             range: true,
             change: function(event, ui) {
