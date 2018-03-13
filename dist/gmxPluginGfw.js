@@ -216,15 +216,8 @@ if (window.gmxCore) {
         }
     }, {
         init: function(module, path) {
-            if (!L.GFWLayerWithSlider) {
                 gmxCore.loadCSS(path + 'L.GFWSlider.css');
-                // return $.when(
-                    // gmxCore.loadScript(path + 'L.GFWLayer.js'),
-                    // gmxCore.loadScript(path + 'L.GFWSlider.js')
-                // );
-            }
         }
-        
     });
 } else {
     defineClass();
