@@ -7,7 +7,7 @@ L.GFWLayer = (L.TileLayer.Canvas || L.TileLayer).extend(L.extend({
 		crossOrigin: true
 	},
 	_drawLayerTile: function(img, coords, zoom) {
-		var tile = this._tiles[L.TileLayer.Canvas ? coords.x + ':' + coords.y : this._tileCoordsToKey(coords)];
+		var tile = this._tiles[L.gmxUtil.isOldVersion ? coords.x + ':' + coords.y : this._tileCoordsToKey(coords)];
 		if (tile) {
 			var ctx = (tile.el || tile).getContext('2d');
 
@@ -44,7 +44,7 @@ L.GFWLayer = (L.TileLayer.Canvas || L.TileLayer).extend(L.extend({
 		this.redraw();
 	}
 }
-, L.TileLayer.Canvas ?
+, L.gmxUtil.isOldVersion ?
 	{
 		initialize: function (url, options) {
 			this._url = url;
