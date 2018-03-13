@@ -2,13 +2,11 @@
  * Requires jQuery and Handlebars
 */
 L.GFWSlider = L.Control.extend({
-    includes: L.Mixin.Events,
-    _yearBegin: 2001,
-    _yearEnd: 2017,
+    includes: L.Evented ? L.Evented.prototype : L.Mixin.Events,
     _setYears: function(yearBegin, yearEnd) {
-        this._yearBegin = yearBegin;
-        this._yearEnd = yearEnd;
-        this.fire('yearschange', {yearBegin: this._yearBegin, yearEnd: this._yearEnd});
+        this.options.yearBegin = yearBegin;
+        this.options.yearEnd = yearEnd;
+        this.fire('yearschange', {yearBegin: yearBegin, yearEnd: yearEnd});
     },
     onAdd: function(map) {
         var template = Handlebars.compile(
@@ -21,20 +19,20 @@ L.GFWSlider = L.Control.extend({
                 '</div>' +
             '</div>'
         );
-        
+
         var labels = [];
-        for (var year = 2001; year <= 2016; year++) {
+        for (var year = this.options.yearBegin; year <= this.options.yearEnd; year++) {
             labels.push(year);
         }
-        
+
         var ui = this._ui = $(template({
             labels: labels
         }));
-        
+
         ui.find('.gfw-slider-container').slider({
-            min: 2001,
-            max: 2017,
-            values: [this._yearBegin, this._yearEnd],
+            min: this.options.yearBegin,
+            max: this.options.yearEnd,
+            values: [this.options.yearBegin, this.options.yearEnd],
             range: true,
             change: function(event, ui) {
                 this._setYears(ui.values[0], ui.values[1]);
@@ -45,24 +43,20 @@ L.GFWSlider = L.Control.extend({
 			.on(ui[0], 'mouseover', dragging.disable, dragging)
 			.on(ui[0], 'mouseout', dragging.enable, dragging);
         
-        // ui.on('mousedown', function(event) {
-            // event.stopPropagation();
-        // });
-        
         return ui[0];
     },
-    
+
     onRemove: function() {
     },
-    
+
     saveState: function() {
         return {
             version: '1.0.0',
-            yearBegin: this._yearBegin,
-            yearEnd: this._yearEnd
+            yearBegin: this.options.yearBegin,
+            yearEnd: this.options.yearEnd
         }
     },
-    
+
     loadState: function(data) {
         if (this._ui) {
             this._ui.find('.gfw-slider-container').slider('option', 'values', [data.yearBegin, data.yearEnd]);

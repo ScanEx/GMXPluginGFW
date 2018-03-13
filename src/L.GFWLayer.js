@@ -2,143 +2,118 @@
 */
 (function (){
 
-var GFW_ATTRIBUTION = '<a href="http://glad.umd.edu/"> Hansen|UMD|Google|USGS|NASA </a>';
+L.GFWLayer = (L.TileLayer.Canvas || L.TileLayer).extend(L.extend({
+	options: {
+		crossOrigin: true
+	},
+	_drawLayerTile: function(img, coords, zoom) {
+		var tile = this._tiles[L.TileLayer.Canvas ? coords.x + ':' + coords.y : this._tileCoordsToKey(coords)];
+		if (tile) {
+			var ctx = (tile.el || tile).getContext('2d');
 
-if (!window.L.TileLayer.Canvas) {window.L.TileLayer.Canvas = window.L.TileLayer}
+			ctx.drawImage(img, 0, 0, 256, 256);
+			var imgData = ctx.getImageData(0, 0, 256, 256),
+				data = imgData.data,
+				z = coords.z || zoom,
+				exp = z < 11 ? 0.3 + ((z - 3) / 20) : 1,
+				options = this.options;
 
-L.GFWLayer = L.TileLayer.Canvas.extend({
-    options: {
-        async: true,
-        attribution: GFW_ATTRIBUTION
-    },
-    _yearBegin: 2001,
-    _yearEnd: 2017,
+			for (var i = 0; i < 256; ++i) {
+				for (var j = 0; j < 256; ++j) {
+					var pixelPos = (j * 256 + i) * 4,
+						yearLoss = 2000 + data[pixelPos + 2],
+						intensity = data[pixelPos],
+						scale = Math.pow(intensity/256, exp) * 256;
 
-    initialize: function() {
-        var setYearInterval = this.setYearInterval.bind(this);
+					if (yearLoss >= options.yearBegin && yearLoss < options.yearEnd) {
+						data[pixelPos] = 220;
+						data[pixelPos + 1] = (72 - z) + 102 - (3 * scale / z);
+						data[pixelPos + 2] = (33 - z) + 153 - ((intensity) / z);
+						data[pixelPos + 3] = z < 13 ? scale : intensity;
+					} else {
+						data[pixelPos + 3] = 0;
+					}
+				}
+			}
+			ctx.putImageData(imgData, 0, 0);
+		}
+	},
+	setYearInterval: function(yearBegin, yearEnd) {
+		this.options.yearBegin = yearBegin;
+		this.options.yearEnd = yearEnd;
+		this.redraw();
+	}
+}
+, L.TileLayer.Canvas ?
+	{
+		initialize: function (url, options) {
+			this._url = url;
+			L.setOptions(this, options);
+		},
+		drawTile: function(canvas, tilePoint, zoom) {
+			var img = new Image();
+			img.crossOrigin = '';
+			img.onload = function() {
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0, 256, 256);
+				this._drawLayerTile(img, tilePoint, zoom);
+				this.tileDrawn(canvas);
+			}.bind(this);
+			tilePoint.z = zoom;
+			img.src = this.getTileUrl(tilePoint);
+		}
+	}
+	:
+	{
+		createTile: function (coords, done) {
+			var tile = this._imgContainer = L.DomUtil.create('canvas', 'leaflet-tile');
+				size = this.getTileSize();
+				// zoom = coords.z || this._map._zoom;
+			tile.width = size.x; tile.height = size.y;
+			(L.TileLayer.prototype.createTile || L.TileLayer.prototype._createTile).call(this, coords, done);
+			return tile;
+		},
 
-        this._slider = new L.GFWSlider({position: 'bottomright'});
+		_tileReady: function (coords, err, img) {
+			if (!err) { this._drawLayerTile(img, coords); }
+			L.TileLayer.prototype._tileReady.call(this, coords, err, img);
+		}
+	}
+));
 
-        this._slider.on('yearschange', function(data) {
-            setYearInterval(data.yearBegin, data.yearEnd);
-        })
-
-        // var url = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/{z}/{x}/{y}.png';
-		var url = '//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/{z}/{x}/{y}.png';
-
-        L.TileLayer.Canvas.prototype.initialize.call(this, url);
-    },
-
-    onAdd: function(map) {
-        map.addControl(this._slider);
-        L.TileLayer.Canvas.prototype.onAdd.call(this, map);
-    },
-
-    onRemove: function(map) {
-        L.TileLayer.Canvas.prototype.onRemove.call(this, map);
-        map.removeControl(this._slider);
-    },
-
-    // redraw: function () {
-    //     if(!L.TileLayer.Canvas.prototype._redrawTile) {
-    //         for (var i in this._tiles) {
-    //             this._redrawTile(this._tiles[i]);
-    //         }
-    //     }
-    //     L.TileLayer.Canvas.prototype.redraw.call(this);
-    // },
-
-    _drawLayer: function(img, ctx, z) {
-        var imgData = ctx.getImageData(0, 0, 256, 256),
-            data = imgData.data,
-            exp = z < 11 ? 0.3 + ((z - 3) / 20) : 1;
-
-        for (var i = 0; i < 256; ++i) {
-            for (var j = 0; j < 256; ++j) {
-                var pixelPos = (j * 256 + i) * 4,
-                    yearLoss = 2000 + data[pixelPos + 2],
-                    intensity = data[pixelPos],
-                    scale = Math.pow(intensity/256, exp) * 256;
-
-                if (yearLoss >= this._yearBegin && yearLoss < this._yearEnd) {
-                    data[pixelPos] = 220;
-                    data[pixelPos + 1] = (72 - z) + 102 - (3 * scale / z);
-                    data[pixelPos + 2] = (33 - z) + 153 - ((intensity) / z);
-                    data[pixelPos + 3] = z < 13 ? scale : intensity;
-                } else {
-                    data[pixelPos + 3] = 0;
-                }
-            }
-        }
-
-        ctx.putImageData(imgData, 0, 0);
-    },
-    drawTile: function(canvas, tilePoint, zoom) {
-        var img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = function() {
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, 256, 256);
-            this._drawLayer(img, ctx, zoom);
-            this.tileDrawn && this.tileDrawn(canvas);
-        }.bind(this);
-
-        // img.src = 'http://storage.googleapis.com/earthenginepartners-hansen/tiles/gfw2015/loss_tree_year_25/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
-		img.src = '//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/' + zoom + '/' + tilePoint.x + '/' + tilePoint.y + '.png';
-    },
-
-    createTile: function(coords){
-        var tile = L.DomUtil.create('canvas', 'leaflet-tile');
-        var size = this.getTileSize();
-        tile.width = size.x;
-        tile.height = size.y;
-
-        var ctx = tile.getContext('2d');
-
-        this.drawTile(tile, coords, this._map._zoom)
-
-        return tile;
-    },
-
-    setYearInterval: function(yearBegin, yearEnd) {
-        this._yearBegin = yearBegin;
-        this._yearEnd = yearEnd;
-        this.redraw();
-    }
-});
 
 //Helper layer with integrated slider control
-L.GFWLayerWithSlider = L.Class.extend({
+L.GFWLayerWithSlider = (L.Layer || L.Class).extend({
     initialize: function() {
-        var layer = this._layer = new L.GFWLayer();
-        this._slider = new L.GFWSlider({position: 'bottomright'});
-
+        var layer = this._layer = new L.GFWLayer('//storage.googleapis.com/wri-public/Hansen_16/tiles/hansen_world/v1/tc30/{z}/{x}/{y}.png', this.options);
+        this._slider = new L.GFWSlider(L.extend({position: 'bottomright'}, this.options));
+        
         this._slider.on('yearschange', function(data) {
             layer.setYearInterval(data.yearBegin, data.yearEnd);
-        })
+        });
     },
-
+    
     onAdd: function(map) {
         map.addLayer(this._layer);
         map.addControl(this._slider);
     },
-
+    
     onRemove: function(map) {
         map.removeLayer(this._layer);
         map.removeControl(this._slider);
     },
-
+    
     setZIndex: function() {
         return this._layer.setZIndex.apply(this._layer, arguments);
     },
-
+    
     getSlider: function() {
         return this._slider;
     },
-
+    
     options: {
-        attribution: GFW_ATTRIBUTION
-    }
+        attribution: '<a href="http://glad.umd.edu/"> Hansen|UMD|Google|USGS|NASA </a>'
+   }
 })
 
 })();

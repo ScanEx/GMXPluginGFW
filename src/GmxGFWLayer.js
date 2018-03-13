@@ -3,7 +3,12 @@
 (function (){
 
 var defineClass = function() {
-    var GeoMixerGFWLayer = L.GFWLayer.extend({
+    var GeoMixerGFWLayer = L.GFWLayerWithSlider.extend({
+		options: {
+			// pane: 'tilePane',
+			yearBegin: 2001,
+			yearEnd: 2017
+		},
         initFromDescription: function(layerDescription) {
             this._gmxProperties = layerDescription.properties;
             return this;
@@ -16,7 +21,6 @@ var defineClass = function() {
     return GeoMixerGFWLayer;
 }
 
-
 if (window.gmxCore) {
     gmxCore.addModule('GFWVirtualLayer', function() {
         return {
@@ -24,18 +28,18 @@ if (window.gmxCore) {
         }
     }, {
         init: function(module, path) {
-            if (!L.GFWLayer) {
+            if (!L.GFWLayerWithSlider) {
                 gmxCore.loadCSS(path + 'L.GFWSlider.css');
-                return $.when(
-                    gmxCore.loadScript(path + 'L.GFWLayer.js'),
-                    gmxCore.loadScript(path + 'L.GFWSlider.js')
-                );
+                // return $.when(
+                    // gmxCore.loadScript(path + 'L.GFWLayer.js'),
+                    // gmxCore.loadScript(path + 'L.GFWSlider.js')
+                // );
             }
         }
-
+        
     });
 } else {
     defineClass();
 }
-
+ 
 })();
