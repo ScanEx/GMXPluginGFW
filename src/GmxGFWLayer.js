@@ -28,7 +28,7 @@ if (window.gmxCore) {
         }
     }, {
         init: function(module, path) {
-                gmxCore.loadCSS(path + 'L.GFWSlider.css');
+			gmxCore.loadCSS(path + 'gmxPluginGfw.css');
         }
     });
 } else {
