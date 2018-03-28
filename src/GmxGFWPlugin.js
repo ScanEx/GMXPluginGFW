@@ -7,7 +7,7 @@ if (!window.gmxCore) {
 
 var publicInterface = {
     pluginName: 'GFW Plugin'
-}
+};
 
 gmxCore.addModule('GFWPlugin', publicInterface, {
     init: function(module, path) {

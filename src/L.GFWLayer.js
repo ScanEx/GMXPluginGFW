@@ -4,7 +4,8 @@
 
 L.GFWLayer = (L.TileLayer.Canvas || L.TileLayer).extend(L.extend({
 	options: {
-		crossOrigin: true
+		crossOrigin: true,
+		maxNativeZoom: 12
 	},
 	_drawLayerTile: function(img, coords, zoom) {
 		var tile = this._tiles[L.gmxUtil.isOldVersion ? coords.x + ':' + coords.y : this._tileCoordsToKey(coords)];

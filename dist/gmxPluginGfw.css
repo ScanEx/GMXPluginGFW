@@ -1,3 +1,11 @@
+.gfw-slider.leaflet-control.marginBottom145 {
+	margin-bottom: 145px;
+    margin-right: 5px;
+}
+.gfw-slider.leaflet-control.marginBottom20 {
+    margin-bottom: 36px;
+    margin-right: 4px;
+}
 .gfw-slider {
     width: 600px;
     background-color: rgba(154, 154, 154, 0.7);

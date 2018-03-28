@@ -7,7 +7,7 @@ var defineClass = function() {
 		options: {
 			// pane: 'tilePane',
 			yearBegin: 2001,
-			yearEnd: 2017
+			yearEnd: 2016
 		},
         initFromDescription: function(layerDescription) {
             this._gmxProperties = layerDescription.properties;

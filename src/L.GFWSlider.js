@@ -8,6 +8,23 @@ L.GFWSlider = L.Control.extend({
         this.options.yearEnd = yearEnd;
         this.fire('yearschange', {yearBegin: yearBegin, yearEnd: yearEnd});
     },
+    _gmxTimelineShift: function(ev) {
+		if (ev.id === 'gmxTimeline' && ev.control) {
+			var control = ev.control;
+			if (ev.type === 'gmxcontroladd') {
+				control.on('statechanged', this._setShift, this);
+				L.DomUtil.addClass(this._container, 'marginBottom145');
+			} else {
+				control.off('statechanged', this._setShift, this);
+				L.DomUtil.removeClass(this._container, 'marginBottom20');
+				L.DomUtil.removeClass(this._container, 'marginBottom145');
+			}
+		}
+    },
+    _setShift: function(state) {
+		L.DomUtil.removeClass(this._container, 'marginBottom' + (state.isVisible ? '20' : '145'));
+		L.DomUtil.addClass(this._container, 'marginBottom' + (state.isVisible ? '145' : '20'));
+    },
     onAdd: function(map) {
         var template = Handlebars.compile(
             '<div class = "gfw-slider">' + 
@@ -28,6 +45,9 @@ L.GFWSlider = L.Control.extend({
         var ui = this._ui = $(template({
             labels: labels
         }));
+		map
+			.on('gmxcontrolremove', this._gmxTimelineShift, this)
+			.on('gmxcontroladd', this._gmxTimelineShift, this);
 
         ui.find('.gfw-slider-container').slider({
             min: this.options.yearBegin,
@@ -42,7 +62,6 @@ L.GFWSlider = L.Control.extend({
 		L.DomEvent
 			.on(ui[0], 'mouseover', dragging.disable, dragging)
 			.on(ui[0], 'mouseout', dragging.enable, dragging);
-        
         return ui[0];
     },
 
