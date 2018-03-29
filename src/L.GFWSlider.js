@@ -22,10 +22,43 @@ L.GFWSlider = L.Control.extend({
 		}
     },
     _setShift: function(state) {
-		L.DomUtil.removeClass(this._container, 'marginBottom' + (state.isVisible ? '20' : '145'));
-		L.DomUtil.addClass(this._container, 'marginBottom' + (state.isVisible ? '145' : '20'));
+		var isVisible = state.isVisible || state.isVisible === undefined;
+		L.DomUtil.removeClass(this._container, 'marginBottom' + (isVisible ? '20' : '145'));
+		L.DomUtil.addClass(this._container, 'marginBottom' + (isVisible ? '145' : '20'));
     },
     onAdd: function(map) {
+		var container = this._container || this._createCont();
+
+		var dragging = map.dragging;
+		L.DomEvent
+			.on(container, 'mouseover', dragging.disable, dragging)
+			.on(container, 'mouseout', dragging.enable, dragging);
+
+		map
+			.on('gmxcontrolremove', this._gmxTimelineShift, this)
+			.on('gmxcontroladd', this._gmxTimelineShift, this);
+
+		if (map.gmxControlsManager) {
+			var gmxTimeline = map.gmxControlsManager.get('gmxTimeline');
+			if (gmxTimeline) {
+				this._setShift(gmxTimeline.saveState())
+			}
+		}
+
+        return container;
+    },
+
+    onRemove: function(map) {
+		var dragging = map.dragging;
+		L.DomEvent
+			.off(this._container, 'mouseover', dragging.disable, dragging)
+			.off(this._container, 'mouseout', dragging.enable, dragging);
+
+		map
+			.off('gmxcontrolremove', this._gmxTimelineShift, this)
+			.off('gmxcontroladd', this._gmxTimelineShift, this);
+    },
+    _createCont: function() {
         var template = Handlebars.compile(
             '<div class = "gfw-slider">' + 
                 '<div class = "gfw-slider-container"></div>' +
@@ -45,9 +78,6 @@ L.GFWSlider = L.Control.extend({
         var ui = this._ui = $(template({
             labels: labels
         }));
-		map
-			.on('gmxcontrolremove', this._gmxTimelineShift, this)
-			.on('gmxcontroladd', this._gmxTimelineShift, this);
 
         ui.find('.gfw-slider-container').slider({
             min: this.options.yearBegin,
@@ -58,14 +88,7 @@ L.GFWSlider = L.Control.extend({
                 this._setYears(ui.values[0], ui.values[1]);
             }.bind(this)
         });
-		var dragging = map.dragging;
-		L.DomEvent
-			.on(ui[0], 'mouseover', dragging.disable, dragging)
-			.on(ui[0], 'mouseout', dragging.enable, dragging);
         return ui[0];
-    },
-
-    onRemove: function() {
     },
 
     saveState: function() {
