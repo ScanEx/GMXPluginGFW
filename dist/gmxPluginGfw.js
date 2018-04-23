@@ -150,10 +150,11 @@ L.GFWSlider = L.Control.extend({
     onAdd: function(map) {
 		var container = this._container || this._createCont();
 
-		var dragging = map.dragging;
-		L.DomEvent
-			.on(container, 'mouseover', dragging.disable, dragging)
-			.on(container, 'mouseout', dragging.enable, dragging);
+		var stop = L.DomEvent.stopPropagation;
+			L.DomEvent
+				.on(container, 'contextmenu', stop)
+				.on(container, 'touchstart', stop)
+				.on(container, 'mousedown', stop);
 
 		map
 			.on('gmxcontrolremove', this._gmxTimelineShift, this)
@@ -172,11 +173,6 @@ L.GFWSlider = L.Control.extend({
     },
 
     onRemove: function(map) {
-		var dragging = map.dragging;
-		L.DomEvent
-			.off(this._container, 'mouseover', dragging.disable, dragging)
-			.off(this._container, 'mouseout', dragging.enable, dragging);
-
 		map
 			.off('gmxcontrolremove', this._gmxTimelineShift, this)
 			.off('gmxcontroladd', this._gmxTimelineShift, this);
