@@ -41,7 +41,9 @@ L.GFWSlider = L.Control.extend({
 		if (map.gmxControlsManager) {
 			var gmxTimeline = map.gmxControlsManager.get('gmxTimeline');
 			if (gmxTimeline) {
-				this._setShift(gmxTimeline.saveState())
+				setTimeout(function() {
+					this._setShift(gmxTimeline.saveState());
+				}.bind(this), 0);
 			}
 		}
 
